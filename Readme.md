@@ -28,6 +28,14 @@ The classifier achieves the following accuracy scores for 10-fold cross-validate
 │ RandomForestClassifier │                  0.901 │                0.744 │                0.826 │                     1 │                     1 │
 | SVC                    │                  0.864 │                0.622 │                0.596 │                     1 │                 0.864 │
 
+| Model                  | LOC after Prepositions | Genitive after Verbs | Genitive of Negation | Per-Character Entropy | All Features Combined |
+|------------------------|------------------------|----------------------|----------------------|-----------------------|-----------------------|
+| MultinomialNB          | 0.489                  | 0.489                | 0.489                | 0.489                 | 0.668                 |
+| ComplementNB           | 0.5                    | 0.5                  | 0.5                  | 0.5                   | 0.668                 |
+| DecisionTreeClassifier | 0.853                  | 0.794                | 0.839                | 1                     | 1                     |
+| RandomForestClassifier | 0.901                  | 0.744                | 0.826                | 1                     | 1                     |
+| SVC                    | 0.864                  | 0.622                | 0.596                | 1                     | 0.864                 |
+
 
 
 
