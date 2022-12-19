@@ -23,8 +23,8 @@ class Error(Exception):
 
 
 # assigns data to variables
-heritage_train = "" # file path for a heritage train corpus
-nonheritage_train = "" # file path for a non-heritage train corpus
+heritage_train = ""  # file path for a heritage train corpus
+nonheritage_train = ""  # file path for a non-heritage train corpus
 heritage_test = "heritage_test.txt"
 nonheritage_test = "nonheritage_test.txt"
 lm = "lm.fst"
@@ -203,7 +203,7 @@ def negation(data: list) -> ndarray:
 
 
 def bits_per_char(string: pynini.Fst, lm: pynini.Fst) -> float:
-    """computes bits per char according to the language model (LM FST)"""
+    """computes bits per character according to the language model (LM FST)"""
     eprops = pynini.ACCEPTOR | pynini.STRING | pynini.UNWEIGHTED
     oprops = string.properties(eprops, True)
     assert eprops == oprops, f"{oprops} != {eprops}"
@@ -233,6 +233,7 @@ def entropy(data: list, lm: pynini.Fst) -> ndarray:
 
 
 def cross_validate(data: ndarray, target: ndarray, model) -> float:
+    """"evaluates the accuracy of the model on 10-fold cross-validated data"""
     X = data
     Y = np.array(target)
     score = cross_val_score(model, X, Y, scoring="accuracy", cv=10)
@@ -241,36 +242,30 @@ def cross_validate(data: ndarray, target: ndarray, model) -> float:
 
 def main():
     # loads the training data
-    heritage_train_input = get_data(heritage_train)  # list of 41 heritage documents
-    nonheritage_train_input = get_data(
-        nonheritage_train
-    )  # list of 36 non-heritage documents
+    heritage_train_input = get_data(heritage_train)  # list of heritage docs
+    nonheritage_train_input = get_data(nonheritage_train)  # list of non-heritage docs
     all_train_input = (
         heritage_train_input + nonheritage_train_input
-    )  # list of 77 documents
+    )  # combined list of heritage and non-heritage docs
 
-    heritage_train_labels = [0] * len(heritage_train_input)  # should be 41 "0" labels
-    nonheritage_train_labels = [1] * len(
-        nonheritage_train_input
-    )  # should be 36 "1" labels
-    all_train_labels = heritage_train_labels + nonheritage_train_labels  # 77 labels
+    # makes the labels for the train data
+    heritage_train_labels = [0] * len(heritage_train_input)
+    nonheritage_train_labels = [1] * len(nonheritage_train_input)
+    all_train_labels = heritage_train_labels + nonheritage_train_labels
 
     # loads the test data
-    heritage_test_input = get_data(heritage_test)  # list of 9 heritage documents
-    nonheritage_test_input = get_data(
-        nonheritage_test
-    )  # list of 9 non-heritage documents
+    heritage_test_input = get_data(heritage_test)  # list of heritage docs
+    nonheritage_test_input = get_data(nonheritage_test)  # list non-heritage docs
     all_test_input = (
         heritage_test_input + nonheritage_test_input
-    )  # list of 18 documents
+    )  # combined list of heritage and non-heritage docs
 
-    heritage_test_labels = [0] * len(heritage_test_input)  # should be 9 "0" labels
-    nonheritage_test_labels = [1] * len(
-        nonheritage_test_input
-    )  # should be 9 "1" labels
-    all_test_labels = heritage_test_labels + nonheritage_test_labels  # 18 labels
+    # makes the labels for the test data
+    heritage_test_labels = [0] * len(heritage_test_input)
+    nonheritage_test_labels = [1] * len(nonheritage_test_input)
+    all_test_labels = heritage_test_labels + nonheritage_test_labels
 
-    # Develops a dummy baseline
+    # develops a dummy baseline
     vectorizer = feature_extraction.text.CountVectorizer(min_df=3, max_df=0.9)
     D_train = vectorizer.fit_transform(all_train_input)
     D_test = vectorizer.transform(all_test_input)
@@ -285,7 +280,7 @@ def main():
         f"\nDummy baseline accuracy:\t{dummy_baseline_accuracy}"
     )  # this should print 0.5 since there is the same number of heritage and non-heritage essays
 
-    # runs everything on the test data
+    # runs the classifier on the test data
     multinomial_NB = naive_bayes.MultinomialNB(alpha=1)
     complement_NB = naive_bayes.ComplementNB()
     decision_tree = DecisionTreeClassifier()
@@ -342,7 +337,7 @@ def main():
         combined_accuracy = metrics.accuracy_score(all_test_labels, combined_prediction)
         feature_acc_scores.append(round(combined_accuracy, 3))
 
-        # appends everything to the table
+        # puts everything in a table
         scores_per_model.append(feature_acc_scores)
 
     # makes and prints the table
@@ -351,7 +346,7 @@ def main():
         f"\n{tabulate(scores_per_model, headers = 'firstrow', tablefmt = 'fancy_grid')}"
     )
 
-    # runs everything on the cross-validated train data
+    # runs the classifier on the cross-validated train data
     cv_models = [
         MultinomialNB(),
         ComplementNB(),
@@ -378,7 +373,7 @@ def main():
         total_cv_accuracy = cross_validate(concatenated_train, all_train_labels, model)
         cv_feature_acc_scores.append(total_cv_accuracy)
 
-        # appends everything to the table
+        # puts everything in a table
         cv_scores_per_model.append(cv_feature_acc_scores)
 
     # makes and prints the table
