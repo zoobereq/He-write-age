@@ -118,7 +118,7 @@ def get_data(path: str) -> list:
     return list_of_lines
 
 
-def get_position(word, sentence):
+def get_position(word, sentence) -> int:
     """gets the token index in a tokenized sentence"""
     tuples = [(token.text, token.i) for token in sentence]
     for tuple in tuples:
@@ -240,7 +240,7 @@ def cross_validate(data: ndarray, target: ndarray, model) -> float:
     return round(score.mean(), 3)
 
 
-def main():
+def main() -> None:
     # loads the training data
     heritage_train_input = get_data(heritage_train)  # list of heritage docs
     nonheritage_train_input = get_data(nonheritage_train)  # list of non-heritage docs
