@@ -1,0 +1,1 @@
+A collection of scripts used to clean and normalize the data used to train and test the classifier.
